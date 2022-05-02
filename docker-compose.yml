@@ -31,6 +31,7 @@ services:
       - haproxy_le_net
     depends_on:
       - certbot
+      - haproxy
 
   haproxy:
     hostname: haproxy
@@ -47,16 +48,15 @@ services:
     volumes:
       - ./haproxy:/usr/local/etc/haproxy:ro
 
-  testapp:
-    hostname: testapp
-    build:
-      context: ./testapp
-      dockerfile: ./Dockerfile-testapp
-    image: testapp
-    container_name: testapp_container
+  simulation_api:    
+    hostname: simulation-api
+    image: jinweijiedocker/simulation-api:latest
+    container_name: simulation_api_container
     networks:
       - haproxy_le_net
     restart: always
+    depends_on:
+      - haproxy
 
 volumes:
   certbot_le_data:
