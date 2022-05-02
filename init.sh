@@ -36,9 +36,9 @@ echo "Start initializing..."
 
 sudo docker compose -f ./docker-compose-init.yml up --build -d 
 
-echo "Waiting 60 seconds to let the initialization finish..."
+echo "Waiting 10 seconds to let the initialization finish..."
 
-sleep 60
+sleep 10
 
 echo "Starting to finish the initialization..."
 
