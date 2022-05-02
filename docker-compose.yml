@@ -1,0 +1,71 @@
+services:
+  certbot:
+    hostname: certbot
+    build:
+      context: ./certbot
+      dockerfile: ./Dockerfile-certbot
+    image: certbot
+    container_name: certbot_container
+    restart: always
+    tty: true # keep container running
+    environment:
+      - LE_DOMAIN=${LE_DOMAIN}
+      - LE_EMAIL=${LE_EMAIL}
+    volumes:
+      - ./haproxy/certs:/etc/haproxy/certs
+      - ./certbot/scripts:/scripts
+      - certbot_le_data:/etc/letsencrypt
+      - certbot_log:/var/log
+    networks:
+      - haproxy_le_net
+
+  ofelia:
+    container_name: ofelia_container
+    image: mcuadros/ofelia:latest
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./ofelia/ofelia.ini:/etc/ofelia/config.ini
+      - ofelia_log:/var/logs
+    networks:
+      - haproxy_le_net
+    depends_on:
+      - certbot
+
+  haproxy:
+    hostname: haproxy
+    image: haproxy:2.5
+    container_name: haproxy_container
+    restart: always
+    depends_on:
+      - certbot
+    networks:
+      - haproxy_le_net
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./haproxy:/usr/local/etc/haproxy:ro
+
+  testapp:
+    hostname: testapp
+    build:
+      context: ./testapp
+      dockerfile: ./Dockerfile-testapp
+    image: testapp
+    container_name: testapp_container
+    networks:
+      - haproxy_le_net
+    restart: always
+
+volumes:
+  certbot_le_data:
+    name: certbot_le_data
+  certbot_log:
+    name: certbot_log
+  ofelia_log:
+    name: ofelia_log
+networks:
+  haproxy_le_net:
+    name: haproxy_le_net
+    driver: bridge

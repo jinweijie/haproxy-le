@@ -1,0 +1,41 @@
+services:
+  certbot:
+    hostname: certbot
+    build:
+      context: ./certbot
+      dockerfile: ./Dockerfile-certbot
+    image: certbot
+    container_name: certbot_container
+    tty: true # keep container running
+    environment:
+      - LE_DOMAIN=${LE_DOMAIN}
+      - LE_EMAIL=${LE_EMAIL}
+    volumes:
+      - ./haproxy/certs:/etc/haproxy/certs
+      - ./certbot/scripts:/scripts
+      - certbot_le_data:/etc/letsencrypt
+      - certbot_log:/var/log
+    networks:
+      - haproxy_le_net
+    command: ["bash", "-c", "sh /scripts/init-cert.sh >> /var/log/init-cert.log 2>&1"]
+  haproxy:
+    hostname: haproxy
+    image: haproxy:2.4.0
+    container_name: haproxy_container
+    depends_on:
+      - certbot
+    networks:
+      - haproxy_le_net
+    ports:
+      - 80:80
+    volumes:
+      - ./haproxy-init:/usr/local/etc/haproxy:ro
+volumes:
+  certbot_le_data:
+    name: certbot_le_data
+  certbot_log:
+    name: certbot_log
+networks:
+  haproxy_le_net:
+    name: haproxy_le_net
+    driver: bridge
