@@ -1,0 +1,34 @@
+services:
+
+  haproxy:
+    hostname: haproxy
+    image: haproxy-rsyslog
+    container_name: haproxy_container
+    restart: always
+    depends_on:
+      - simulation_api
+    networks:
+      - haproxy_le_net
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./haproxy-log:/usr/local/etc/haproxy:ro
+
+  simulation_api:    
+    hostname: simulation-api
+    image: jinweijiedocker/simulation-api:latest
+    container_name: simulation_api_container
+    networks:
+      - haproxy_le_net
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "http://simulation-api:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  haproxy_le_net:
+    name: haproxy_le_net
+    driver: bridge
