@@ -47,6 +47,7 @@ services:
       - 443:443
     volumes:
       - ./haproxy:/usr/local/etc/haproxy:ro
+      - haproxy_log:/var/log
 
   simulation_api:    
     hostname: simulation-api
@@ -65,6 +66,8 @@ volumes:
     name: certbot_log
   ofelia_log:
     name: ofelia_log
+  haproxy_log:
+    name: haproxy_log
 networks:
   haproxy_le_net:
     name: haproxy_le_net
