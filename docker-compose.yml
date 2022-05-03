@@ -40,6 +40,7 @@ services:
     restart: always
     depends_on:
       - certbot
+      - simulation_api
     networks:
       - haproxy_le_net
     ports:
@@ -56,8 +57,11 @@ services:
     networks:
       - haproxy_le_net
     restart: always
-    depends_on:
-      - haproxy
+    healthcheck:
+      test: ["CMD", "curl", "http://simulation-api:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   certbot_le_data:
