@@ -3,5 +3,11 @@ FROM debian:buster-slim
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -q -y update && \
     apt-get -q -y install rsyslog 
-    
+
+ADD scripts /scripts
+ADD rsyslog.d/99-haproxy.conf /etc/rsyslog.d/99-haproxy.conf
+ADD logrotate.d/haproxy.conf /etc/logrotate.d/haproxy.conf
+
+RUN chmod 644 /etc/logrotate.d/haproxy.conf && chown root:root /etc/logrotate.d/haproxy.conf
+
 CMD ["/usr/sbin/rsyslogd","-n","-i","/var/run/syslogd.pid"]
