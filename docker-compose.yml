@@ -54,6 +54,7 @@ services:
     container_name: haproxy_container
     restart: always
     depends_on:
+      - rsyslog
       - certbot
       - simulation_api
     networks:
