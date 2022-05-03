@@ -1,0 +1,7 @@
+FROM debian:buster-slim
+
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -q -y update && \
+    apt-get -q -y install rsyslog 
+    
+CMD ["/usr/sbin/rsyslogd","-n","-i","/var/run/syslogd.pid"]

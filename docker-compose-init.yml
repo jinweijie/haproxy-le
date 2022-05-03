@@ -31,14 +31,11 @@ services:
       - 80:80
     volumes:
       - ./haproxy-init:/usr/local/etc/haproxy:ro
-      - haproxy_log:/var/log
 volumes:
   certbot_le_data:
     name: certbot_le_data
   certbot_log:
     name: certbot_log
-  haproxy_log:
-    name: haproxy_log
 networks:
   haproxy_le_net:
     name: haproxy_le_net
