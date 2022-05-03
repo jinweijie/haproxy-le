@@ -21,7 +21,7 @@ services:
 
   haproxy:
     hostname: haproxy
-    image: haproxy:2.4.0
+    image: haproxy:2.5
     container_name: haproxy_container
     depends_on:
       - certbot
