@@ -71,7 +71,7 @@ services:
       - haproxy_le_net
     restart: always
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--spider", "http://simulation-api:80", "||", "exit", "1"]
+      test: ["CMD-SHELL", "wget --no-verbose --spider http://localhost || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
